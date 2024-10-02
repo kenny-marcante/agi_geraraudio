@@ -21,7 +21,6 @@ type ContollerPolly struct {
 	agi *agi.Session
 }
 
-
 func NewControllerPolly(agiloc *agi.Session) ContollerPolly {
 	var controller ContollerPolly
 
@@ -138,7 +137,10 @@ func ExecMain() int {
 	if _, err := os.ReadFile(dirFile + ext); err == nil {
 		Agi.Verbose("Arquivo " + file + " ja existe no servidor")
 		if vocalize {
-			Agi.StreamFile(dirFile, "#")
+			rpl, _ := Agi.StreamFile(dirFile, "0123456789", 0)
+			if rpl.Dat != "" {
+				Agi.SetContext(rpl.Dat)
+			}
 		}
 		return 0
 	}
@@ -178,7 +180,10 @@ func ExecMain() int {
 	if _, errd := os.ReadFile(dirFile + ext); errd == nil {
 		Agi.Verbose("Arquivo" + file + "Criado com sucesso!")
 		if vocalize {
-			Agi.StreamFile(dirFile, "#", 0)
+			rpl, _ := Agi.StreamFile(dirFile, "0123456789", 0)
+			if rpl.Dat != "" {
+				Agi.SetContext(rpl.Dat)
+			}
 		}
 		Agi.Verbose("Síntese de fala concluída com sucesso. Áudio salvo em " + dirFile + ext)
 		return 0
