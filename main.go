@@ -137,9 +137,9 @@ func ExecMain() int {
 	if _, err := os.ReadFile(dirFile + ext); err == nil {
 		Agi.Verbose("Arquivo " + file + " ja existe no servidor")
 		if vocalize {
-			rpl, _ := Agi.StreamFile(dirFile, "0123456789", 0)
-			if rpl.Dat != "" {
-				Agi.SetContext(rpl.Dat)
+			rpl, _ := Agi.GetOption(dirFile, "123456789")
+			if rpl.Res != 0 {
+				Agi.SetExtension(strconv.Itoa(rpl.Res))
 			}
 		}
 		return 0
@@ -180,9 +180,9 @@ func ExecMain() int {
 	if _, errd := os.ReadFile(dirFile + ext); errd == nil {
 		Agi.Verbose("Arquivo" + file + "Criado com sucesso!")
 		if vocalize {
-			rpl, _ := Agi.StreamFile(dirFile, "0123456789", 0)
-			if rpl.Dat != "" {
-				Agi.SetContext(rpl.Dat)
+			rpl, _ := Agi.GetOption(dirFile, "123456789")
+			if rpl.Res != 0 {
+				Agi.SetExtension(strconv.Itoa(rpl.Res))
 			}
 		}
 		Agi.Verbose("Síntese de fala concluída com sucesso. Áudio salvo em " + dirFile + ext)
