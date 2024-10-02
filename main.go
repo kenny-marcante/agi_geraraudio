@@ -18,17 +18,25 @@ import (
 // Polly
 type ContollerPolly struct {
 	svc *polly.Polly
-	agi agi.Session
+	agi *agi.Session
 }
 
-func NewControllerPolly() ContollerPolly {
+
+func NewControllerPolly(agiloc *agi.Session) ContollerPolly {
 	var controller ContollerPolly
-	// Configure a sessão da AWS
+
+	// Tente inicializar a sessão AWS
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
+	controller.agi = agiloc
 	controller.agi.Verbose("polly controller")
-	// Crie um cliente para o serviço Polly
+	if sess == nil {
+		controller.agi.Verbose("Erro: sessão AWS Polly não foi criada!")
+	} else {
+		controller.agi.Verbose("Sessão AWS Polly criada com sucesso")
+	}
+
 	controller.svc = polly.New(sess)
 	return controller
 }
@@ -45,6 +53,7 @@ func (c *ContollerPolly) RequestAudio(texto string, voice string) (*polly.Synthe
 	}
 
 	// Faça a solicitação de sintetização de fala
+	c.agi.Verbose("solicitaod audio a polly")
 	resp, err := c.svc.SynthesizeSpeech(input)
 	if err != nil {
 		c.agi.Verbose(fmt.Sprint("Erro ao solicitar a síntese de fala: ", err))
@@ -136,13 +145,14 @@ func ExecMain() int {
 
 	Agi.Verbose("iniciar polly")
 	// Instancia o polly e faz o request
-	plly := NewControllerPolly()
+	plly := NewControllerPolly(Agi)
 	resp, err := plly.RequestAudio(texto, voice)
 	if err != nil {
 		Agi.Verbose("Erro ao criar construir polly:", 1)
 		return 4
 	}
 
+	Agi.Verbose("audio solicitado")
 	// Salve o áudio de saída em um arquivo
 	outFile, err := os.Create(tmpFile)
 	if err != nil {
