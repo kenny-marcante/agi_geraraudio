@@ -137,7 +137,7 @@ func ExecMain() int {
 	if _, err := os.ReadFile(dirFile + ext); err == nil {
 		Agi.Verbose("Arquivo " + file + " ja existe no servidor")
 		if vocalize {
-			rpl, _ := Agi.GetData(dirFile)
+			rpl, _ := Agi.GetData(dirFile, 1, 10)
 			if rpl.Res != 0 {
 				Agi.SetExtension(strconv.Itoa(rpl.Res))
 			}
@@ -180,7 +180,7 @@ func ExecMain() int {
 	if _, errd := os.ReadFile(dirFile + ext); errd == nil {
 		Agi.Verbose("Arquivo" + file + "Criado com sucesso!")
 		if vocalize {
-			rpl, _ := Agi.GetData(dirFile)
+			rpl, _ := Agi.GetData(dirFile, 1, 10)
 			if rpl.Res != 0 {
 				Agi.SetExtension(strconv.Itoa(rpl.Res))
 			}
