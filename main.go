@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -119,6 +120,7 @@ func ExecMain() int {
 	var texto string = os.Args[1]
 	var voice string = os.Args[2]
 	vocalize, _ := strconv.ParseBool(os.Args[3])
+	var render string = strings.ToLower(os.Args[4])
 
 	if len(texto) <= 0 {
 		Agi.Verbose("Texto Vazio:")
@@ -137,10 +139,17 @@ func ExecMain() int {
 	if _, err := os.ReadFile(dirFile + ext); err == nil {
 		Agi.Verbose("Arquivo " + file + " ja existe no servidor")
 		if vocalize {
-			rpl, _ := Agi.GetData(dirFile, 1, 10)
-			if rpl.Res != 0 {
-				Agi.SetExtension(strconv.Itoa(rpl.Res))
-				Agi.SetPriority("1")
+			switch render {
+			case "playback":
+				Agi.StreamFile(dirFile, "")
+			case "background":
+				rpl, _ := Agi.GetData(dirFile, 1, 30)
+				if rpl.Res != 0 {
+					Agi.SetExtension(strconv.Itoa(rpl.Res))
+					Agi.SetPriority("1")
+				}
+			default:
+				Agi.StreamFile(dirFile, "#")
 			}
 		}
 		return 0
@@ -181,9 +190,17 @@ func ExecMain() int {
 	if _, errd := os.ReadFile(dirFile + ext); errd == nil {
 		Agi.Verbose("Arquivo" + file + "Criado com sucesso!")
 		if vocalize {
-			rpl, _ := Agi.GetData(dirFile, 1, 10)
-			if rpl.Res != 0 {
-				Agi.SetExtension(strconv.Itoa(rpl.Res))
+			switch render {
+			case "playback":
+				Agi.StreamFile(dirFile, "")
+			case "background":
+				rpl, _ := Agi.GetData(dirFile, 1, 30)
+				if rpl.Res != 0 {
+					Agi.SetExtension(strconv.Itoa(rpl.Res))
+					Agi.SetPriority("1")
+				}
+			default:
+				Agi.StreamFile(dirFile, "#")
 			}
 		}
 		Agi.Verbose("Síntese de fala concluída com sucesso. Áudio salvo em " + dirFile + ext)
