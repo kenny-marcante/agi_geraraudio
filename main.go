@@ -140,6 +140,7 @@ func ExecMain() int {
 			rpl, _ := Agi.GetData(dirFile, 1, 10)
 			if rpl.Res != 0 {
 				Agi.SetExtension(strconv.Itoa(rpl.Res))
+				Agi.SetPriority("1")
 			}
 		}
 		return 0
